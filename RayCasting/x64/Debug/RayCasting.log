@@ -1,5 +1,16 @@
-﻿main.obj : error LNK2019: SDL_InitSDL_main 함수에서 참조되는 확인할 수 없는 외부 기호
+﻿  main.c
+main.obj : error LNK2019: SDL_CreateWindowinitializeWindow 함수에서 참조되는 확인할 수 없는 외부 기호
+main.obj : error LNK2019: SDL_DestroyWindowdestroyWindow 함수에서 참조되는 확인할 수 없는 외부 기호
+main.obj : error LNK2019: SDL_PollEventprocessInput 함수에서 참조되는 확인할 수 없는 외부 기호
+main.obj : error LNK2019: SDL_CreateRendererinitializeWindow 함수에서 참조되는 확인할 수 없는 외부 기호
+main.obj : error LNK2019: SDL_SetRenderDrawColorrender 함수에서 참조되는 확인할 수 없는 외부 기호
+main.obj : error LNK2019: SDL_SetRenderDrawBlendModeinitializeWindow 함수에서 참조되는 확인할 수 없는 외부 기호
+main.obj : error LNK2019: SDL_RenderClearrender 함수에서 참조되는 확인할 수 없는 외부 기호
+main.obj : error LNK2019: SDL_RenderPresentrender 함수에서 참조되는 확인할 수 없는 외부 기호
+main.obj : error LNK2019: SDL_DestroyRendererdestroyWindow 함수에서 참조되는 확인할 수 없는 외부 기호
+main.obj : error LNK2019: SDL_InitinitializeWindow 함수에서 참조되는 확인할 수 없는 외부 기호
+main.obj : error LNK2019: SDL_QuitdestroyWindow 함수에서 참조되는 확인할 수 없는 외부 기호
 MSVCRTD.lib(exe_main.obj) : error LNK2019: main"int __cdecl invoke_main(void)" (?invoke_main@@YAHXZ) 함수에서 참조되는 확인할 수 없는 외부 기호
 C:\SDL2\lib\x86\SDL2.lib : warning LNK4272: 'x86' 라이브러리 컴퓨터 종류가 'x64' 대상 컴퓨터 종류와 충돌합니다.
 C:\SDL2\lib\x86\SDL2main.lib : warning LNK4272: 'x86' 라이브러리 컴퓨터 종류가 'x64' 대상 컴퓨터 종류와 충돌합니다.
-C:\Users\HyunseopYun\Desktop\raycasting\raycasting-c\RayCasting\x64\Debug\RayCasting.exe : fatal error LNK1120: 2개의 확인할 수 없는 외부 참조입니다.
+C:\Users\HyunseopYun\Desktop\raycasting\raycasting-c\RayCastingInC\x64\Debug\RayCasting.exe : fatal error LNK1120: 12개의 확인할 수 없는 외부 참조입니다.
