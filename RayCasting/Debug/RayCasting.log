@@ -1,3 +1,20 @@
 ﻿  main.c
-  LINK : C:\Users\HyunseopYun\Desktop\raycasting\raycasting-c\RayCastingInC\Debug\RayCasting.exe을(를) 찾을 수 없거나 마지막 증분 링크에 의해 빌드되지 않았습니다. 전체 링크를 수행하고 있습니다.
+C:\Users\HyunseopYun\Desktop\raycasting\raycasting-c\RayCastingInC\RayCasting\main.c(112,31): warning C4305: '=': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\HyunseopYun\Desktop\raycasting\raycasting-c\RayCastingInC\RayCasting\main.c(114,36): warning C4305: '=': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\HyunseopYun\Desktop\raycasting\raycasting-c\RayCastingInC\RayCasting\main.c(123,22): warning C4244: '초기화 중': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\HyunseopYun\Desktop\raycasting\raycasting-c\RayCastingInC\RayCasting\main.c(124,22): warning C4244: '초기화 중': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\HyunseopYun\Desktop\raycasting\raycasting-c\RayCastingInC\RayCasting\main.c(140,11): warning C4244: '초기화 중': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\HyunseopYun\Desktop\raycasting\raycasting-c\RayCastingInC\RayCasting\main.c(141,11): warning C4244: '초기화 중': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\HyunseopYun\Desktop\raycasting\raycasting-c\RayCastingInC\RayCasting\main.c(142,15): warning C4244: '초기화 중': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\HyunseopYun\Desktop\raycasting\raycasting-c\RayCastingInC\RayCasting\main.c(143,15): warning C4244: '초기화 중': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\HyunseopYun\Desktop\raycasting\raycasting-c\RayCastingInC\RayCasting\main.c(156,30): warning C4244: '초기화 중': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\HyunseopYun\Desktop\raycasting\raycasting-c\RayCastingInC\RayCasting\main.c(157,30): warning C4244: '초기화 중': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\HyunseopYun\Desktop\raycasting\raycasting-c\RayCastingInC\RayCasting\main.c(182,24): warning C4244: '함수': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\HyunseopYun\Desktop\raycasting\raycasting-c\RayCastingInC\RayCasting\main.c(183,24): warning C4244: '함수': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\HyunseopYun\Desktop\raycasting\raycasting-c\RayCastingInC\RayCasting\main.c(184,24): warning C4244: '함수': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\HyunseopYun\Desktop\raycasting\raycasting-c\RayCastingInC\RayCasting\main.c(185,24): warning C4244: '함수': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\HyunseopYun\Desktop\raycasting\raycasting-c\RayCastingInC\RayCasting\main.c(173,12): warning C4244: '초기화 중': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\HyunseopYun\Desktop\raycasting\raycasting-c\RayCastingInC\RayCasting\main.c(174,12): warning C4244: '초기화 중': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\HyunseopYun\Desktop\raycasting\raycasting-c\RayCastingInC\RayCasting\main.c(175,16): warning C4244: '초기화 중': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\HyunseopYun\Desktop\raycasting\raycasting-c\RayCastingInC\RayCasting\main.c(176,17): warning C4244: '초기화 중': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   RayCasting.vcxproj -> C:\Users\HyunseopYun\Desktop\raycasting\raycasting-c\RayCastingInC\Debug\RayCasting.exe
