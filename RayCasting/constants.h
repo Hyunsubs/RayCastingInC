@@ -4,7 +4,7 @@
 
 //수학용
 #define PI 3.14159265
-#define TWO_PO 6.28318530
+#define TWO_PI 6.28318530
 
 //각 셀당 타일 사이즈 64x64
 #define TILE_SIZE 64
