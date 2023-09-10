@@ -1,27 +1,23 @@
 //스탠다드 라이브러리랑 SDL 라이브러리 추가
 #include <stdio.h>
+#include <stdint.h>
+#include <stdbool.h>
 #include <SDL.h>
 #include <limits.h>
-//상수 모음집
-#include "constants.h"
+#include <float.h>
+#include "map.h"
 
+//상수 모음집
+#include "defs.h"
+
+//sdl 그래픽 처리 관련
+#include "graphics.h"
+
+//텍스처 하드코딩 헤더 추가
+#include "textures.h"
 
 //2차원 맵
-const int map[MAP_NUM_ROWS][MAP_NUM_COLS] = {
-	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ,1, 1, 1, 1, 1, 1, 1},
-	{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-	{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-	{1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1},
-	{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-	{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1},
-	{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1},
-	{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1},
-	{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1},
-	{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-	{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-	{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
-};
+
 
 
 struct Player
@@ -46,74 +42,18 @@ struct Ray
 	float wallHitY;
 	float distance;
 
-	int wasHitVertical;
-	int isRayFacingUp;
-	int isRayFacingDown;
-	int isRayFacingLeft;
-	int isRayFacingRight;
+	bool wasHitVertical;
 	int wallHitContent;
 	
 } rays[NUM_RAYS]; //NUM_RAYS = WINDOW_WIDTH / WALL_STRIP
 
 
-SDL_Window* window = NULL;
-SDL_Renderer* renderer = NULL;
-int isGameRunning = FALSE;
+
+bool isGameRunning = false;
 //이전 프레임 틱
 int ticksLastFrame = 0;
 
 
-
-int initializeWindow()
-{
-	//Instantiate Canvas
-	//SDL INIT EVERYTHING은 SDL헤더안에 있는 상수임
-	if (SDL_Init(SDL_INIT_EVERYTHING) != 0) //모든것을 초기화
-	{
-		fprintf(stderr, "Error initializing SDL. \n");
-		return FALSE;
-	}
-	//에러가 없다면 0을 반환
-	window = SDL_CreateWindow(
-		TITLE,
-		SDL_WINDOWPOS_CENTERED,
-		SDL_WINDOWPOS_CENTERED,
-		WINDOW_WIDTH,
-		WINDOW_HEIGHT,
-		SDL_WINDOW_BORDERLESS
-	);
-
-	if (!window) {
-		fprintf(stderr, "Error creating SDL widnow.\n");
-		return FALSE;
-	}
-
-	renderer = SDL_CreateRenderer(
-		window,
-		-1,
-		0
-	);
-
-	if (!renderer)
-	{
-		fprintf(stderr, "Error creating SDL renderer. \n");
-		return FALSE;
-	}
-
-	SDL_SetRenderDrawBlendMode(
-		renderer,
-		SDL_BLENDMODE_BLEND
-		);
-
-	return TRUE;
-}
-
-void destroyWindow()
-{
-	SDL_DestroyRenderer(renderer);
-	SDL_DestroyWindow(window);
-	SDL_Quit();
-}
 
 void setup()
 {
@@ -127,19 +67,15 @@ void setup()
 	player.walkDirection = 0;
 	player.rotationAngle = PI / 2; //90 degree in radian system
 	player.walkSpeed = 100; //100 pixels per sec
-	player.turnSpeed = 45 * (PI / 180); //45 degrees per sec
+	player.turnSpeed = 60 * (PI / 180); //45 degrees per sec
+
+
+
+
+	//모든 png 디코드해서 walltextures 배열로 변환
+	loadWallTexutures();
 }
 
-int mapHasWallAt(float x, float y)
-{
-	if (x < 0 || x > WINDOW_WIDTH || y < 0 || y > WINDOW_HEIGHT)
-	{
-		return TRUE;
-	}
-	int mapGridIndexX = floor(x / TILE_SIZE);
-	int mapGridIndexY = floor(y / TILE_SIZE);
-	return map[mapGridIndexY][mapGridIndexX] == 1 ? TRUE : FALSE;
-}
 
 float normalizeAngle(float angle)
 {
@@ -160,16 +96,16 @@ void castRay(float rayAngle, int stripId)
 {
 	rayAngle = normalizeAngle(rayAngle);
 
-	int isRayFacingDown = rayAngle > 0 && rayAngle < PI;
-	int isRayFacingUp = !isRayFacingDown;
-	int isRayFacingRight = rayAngle < 0.5 * PI || rayAngle > 1.5 * PI;
-	int	isRayFacingLeft = !isRayFacingRight;
+	bool isRayFacingDown = rayAngle > 0 && rayAngle < PI;
+	bool isRayFacingUp = !isRayFacingDown;
+	bool isRayFacingRight = rayAngle < 0.5 * PI || rayAngle > 1.5 * PI;
+	bool isRayFacingLeft = !isRayFacingRight;
 
 	float xintercept, yintercept;
 	float xstep, ystep;
 
 	//HorzWallHit Part
-	int foundHorzWallHit = FALSE;
+	bool foundHorzWallHit = false;
 	float horzWallHitX = 0;
 	float horzWallHitY = 0;
 	int horzWallContent = 0;
@@ -191,9 +127,9 @@ void castRay(float rayAngle, int stripId)
 
 	while (
 		nextHorzTouchX >= 0 &&
-		nextHorzTouchX <= WINDOW_WIDTH &&
+		nextHorzTouchX <= MAP_NUM_COLS * TILE_SIZE &&
 		nextHorzTouchY >= 0 &&
-		nextHorzTouchY <= WINDOW_HEIGHT
+		nextHorzTouchY <= MAP_NUM_ROWS * TILE_SIZE
 		)
 	{
 		float xToCheck = nextHorzTouchX;
@@ -204,8 +140,8 @@ void castRay(float rayAngle, int stripId)
 			//there's a wall hit
 			horzWallHitX = nextHorzTouchX;
 			horzWallHitY = nextHorzTouchY;
-			horzWallContent = map[(int)floor(yToCheck / TILE_SIZE)][(int)floor(xToCheck / TILE_SIZE)];
-			foundHorzWallHit = TRUE;
+			horzWallContent = getMapAt((int)floor(yToCheck / TILE_SIZE),(int)floor(xToCheck / TILE_SIZE));
+			foundHorzWallHit = true;
 			break;
 		}
 		else
@@ -216,7 +152,7 @@ void castRay(float rayAngle, int stripId)
 	}
 
 	//vertical part
-	int foundVertWallHit = FALSE;
+	bool foundVertWallHit = false;
 	float vertWallHitX = 0;
 	float vertWallHitY = 0;
 	int vertWallContent = 0;
@@ -239,9 +175,9 @@ void castRay(float rayAngle, int stripId)
 
 	while (
 		nextVertTouchX >= 0 &&
-		nextVertTouchX <= WINDOW_WIDTH &&
+		nextVertTouchX <= MAP_NUM_COLS * TILE_SIZE &&
 		nextVertTouchY >= 0 &&
-		nextVertTouchY <= WINDOW_HEIGHT
+		nextVertTouchY <= MAP_NUM_ROWS * TILE_SIZE
 		)
 	{
 		float xToCheck = nextVertTouchX + (isRayFacingLeft ? -1 : 0);
@@ -252,8 +188,8 @@ void castRay(float rayAngle, int stripId)
 			//there's a wall hit
 			vertWallHitX = nextVertTouchX;
 			vertWallHitY = nextVertTouchY;
-			vertWallContent = map[(int)floor(yToCheck / TILE_SIZE)][(int)floor(xToCheck / TILE_SIZE)];
-			foundVertWallHit = TRUE;
+			vertWallContent = getMapAt((int)floor(yToCheck / TILE_SIZE),(int)floor(xToCheck / TILE_SIZE));
+			foundVertWallHit = true;
 			break;
 		}
 		else
@@ -267,10 +203,10 @@ void castRay(float rayAngle, int stripId)
 	//Calculate both horizontal and vertical hit distances and choose the smallest one
 	float horzHitDistance = foundHorzWallHit 
 		? distanceBetweenPoints(player.x, player.y, horzWallHitX, horzWallHitY)
-		: INT_MAX;
+		: FLT_MAX;
 	float vertHitDistance = foundVertWallHit 
 		? distanceBetweenPoints(player.x, player.y, vertWallHitX, vertWallHitY) 
-		: INT_MAX;
+		: FLT_MAX;
 
 	if (vertHitDistance < horzHitDistance) 
 	{
@@ -278,7 +214,8 @@ void castRay(float rayAngle, int stripId)
 		rays[stripId].wallHitX = vertWallHitX;
 		rays[stripId].wallHitY = vertWallHitY;
 		rays[stripId].wallHitContent = vertWallContent;
-		rays[stripId].wasHitVertical = TRUE;
+		rays[stripId].wasHitVertical = true;
+		rays[stripId].rayAngle = rayAngle;
 	}
 	else
 	{
@@ -286,63 +223,41 @@ void castRay(float rayAngle, int stripId)
 		rays[stripId].wallHitX = horzWallHitX;
 		rays[stripId].wallHitY = horzWallHitY;
 		rays[stripId].wallHitContent = horzWallContent;
-		rays[stripId].wasHitVertical = FALSE;
+		rays[stripId].wasHitVertical = false;
+		rays[stripId].rayAngle = rayAngle;
 	}
 
-	rays[stripId].rayAngle = rayAngle;
-	rays[stripId].isRayFacingDown = isRayFacingDown;
-	rays[stripId].isRayFacingUp = isRayFacingUp;
-	rays[stripId].isRayFacingLeft = isRayFacingLeft;
-	rays[stripId].isRayFacingRight = isRayFacingRight;
 
 }
 
 void castAllRays() 
 {
-	//start first ray subracting half of our FOV
-	float rayAngle = player.rotationAngle - (FOV_ANGLE / 2);
-
-	for (int stripId = 0; stripId < NUM_RAYS; stripId++)
+	////start first ray subracting half of our FOV
+	//float rayAngle = player.rotationAngle - (FOV_ANGLE / 2);
+	//
+	//왼쪽부터 시작하는 개념을 없애고 시작함
+	for (int col = 0; col < NUM_RAYS; col++)
 	{
-		castRay(rayAngle, stripId);
-		rayAngle += FOV_ANGLE / NUM_RAYS;
+		float rayAngle = player.rotationAngle + atan((col - NUM_RAYS / 2) / DIST_PROJ_PLANE);
+		castRay(rayAngle, col);
+		
 	}
 }
 
-void renderMap()
-{
-	for (int i = 0; i < MAP_NUM_ROWS; i++)
-	{
-		for (int j = 0; j < MAP_NUM_COLS; j++)
-		{
-			int tileX = j * TILE_SIZE;
-			int tileY = i * TILE_SIZE;
-			int tileColor = map[i][j] != 0 ? 255 : 0;
 
-			SDL_SetRenderDrawColor(renderer, tileColor, tileColor, tileColor, 255);
-			SDL_Rect mapTileRect = {
-				tileX * MINIMAP_SCALE_FACTOR,
-				tileY * MINIMAP_SCALE_FACTOR,
-				TILE_SIZE * MINIMAP_SCALE_FACTOR,
-				TILE_SIZE * MINIMAP_SCALE_FACTOR,
-			};
-			SDL_RenderFillRect(renderer, &mapTileRect);
-		}
-	}
-}
 
 void renderRays() {
-	SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-	for (int i = 0; i < NUM_RAYS; i++)
-	{
-		SDL_RenderDrawLine(
-			renderer,
-			MINIMAP_SCALE_FACTOR * player.x,
-			MINIMAP_SCALE_FACTOR * player.y,
-			MINIMAP_SCALE_FACTOR * rays[i].wallHitX,
-			MINIMAP_SCALE_FACTOR * rays[i].wallHitY
-		);
-	}
+	//SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+	//for (int i = 0; i < NUM_RAYS; i++)
+	//{
+	//	SDL_RenderDrawLine(
+	//		renderer,
+	//		MINIMAP_SCALE_FACTOR * player.x,
+	//		MINIMAP_SCALE_FACTOR * player.y,
+	//		MINIMAP_SCALE_FACTOR * rays[i].wallHitX,
+	//		MINIMAP_SCALE_FACTOR * rays[i].wallHitY
+	//	);
+	//}
 }
 
 void movePlayer(float deltaTime)
@@ -366,22 +281,25 @@ void movePlayer(float deltaTime)
 
 void renderPlayer()
 {
-	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-	SDL_Rect playerRect = {
-		player.x * MINIMAP_SCALE_FACTOR,
-		player.y * MINIMAP_SCALE_FACTOR,
-		player.width * MINIMAP_SCALE_FACTOR,
-		player.height * MINIMAP_SCALE_FACTOR
-	};
-	SDL_RenderFillRect(renderer, &playerRect);
+	//SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+	//SDL_Rect playerRect = {
+	//	player.x * MINIMAP_SCALE_FACTOR,
+	//	player.y * MINIMAP_SCALE_FACTOR,
+	//	player.width * MINIMAP_SCALE_FACTOR,
+	//	player.height * MINIMAP_SCALE_FACTOR
+	//};
+	//SDL_RenderFillRect(renderer, &playerRect);
 
-	SDL_RenderDrawLine(
-		renderer,
-		MINIMAP_SCALE_FACTOR * player.x,
-		MINIMAP_SCALE_FACTOR * player.y,
-		MINIMAP_SCALE_FACTOR * (player.x + cos(player.rotationAngle) * 40),
-		MINIMAP_SCALE_FACTOR * (player.y + sin(player.rotationAngle) * 40)
-	);
+	//SDL_RenderDrawLine(
+	//	renderer,
+	//	MINIMAP_SCALE_FACTOR * player.x,
+	//	MINIMAP_SCALE_FACTOR * player.y,
+	//	MINIMAP_SCALE_FACTOR * (player.x + cos(player.rotationAngle) * 40),
+	//	MINIMAP_SCALE_FACTOR * (player.y + sin(player.rotationAngle) * 40)
+	//);
+
+
+
 }
 
 
@@ -393,7 +311,7 @@ void processInput()
 	{
 		case SDL_QUIT:
 		{
-			isGameRunning = FALSE;
+			isGameRunning = false;
 			break;
 		}
 
@@ -401,7 +319,7 @@ void processInput()
 		{
 			if (event.key.keysym.sym == SDLK_ESCAPE)
 			{
-				isGameRunning = FALSE;
+				isGameRunning = false;
 				break;
 			}
 			if (event.key.keysym.sym == SDLK_UP)
@@ -456,7 +374,7 @@ void update()
 	//이 조건을 렌더 하지 않음으로써 초당 30장씩 균일하게 렌더링됨
 	//while루프에 들어가 있는 동안은 프로세서가 다른것을 하지 못하고 갇혀있는 상태라고 볼 수 있다.
 	//while에 넣는 대신 SDL DELAY를 사용하여 sleep을 시키는것이 프로세서 사용량을 줄이는 면에서 좋다.
-	//SDL_Delay(Uint32 ms) 파라미터에 들어간 ms만큼 sleep을 수행한다.
+	//SDL_Delay(uint32_t ms) 파라미터에 들어간 ms만큼 sleep을 수행한다.
 
 	//기다려야 할 시간 각 프레임 시간 - 현재 렌더 시간
 	//렌더 돼야하는 시간이 아니라면 
@@ -468,9 +386,6 @@ void update()
 		SDL_Delay(timeToWait);
 	}
 
-
-
-
 	float deltaTime = (SDL_GetTicks() - ticksLastFrame) / 1000.0f;
 
 	ticksLastFrame = SDL_GetTicks();
@@ -480,25 +395,95 @@ void update()
 
 }
 
-
-void render()
+void renderWallProjection()
 {
-	//더블 버퍼용 빈 이미지
-	SDL_SetRenderDrawColor(renderer, 0,0,0,255);
-	SDL_RenderClear(renderer);
+	for (int x = 0; x < NUM_RAYS; x++)
+	{
+		float perpDistance = rays[x].distance * cos(rays[x].rayAngle - player.rotationAngle);
+		float projectedWallHeight = (TILE_SIZE / perpDistance) * DIST_PROJ_PLANE;
 
+		int wallStripHeight = (int)projectedWallHeight;//ray distance와 관련 있음.
 
-	renderMap();
-	renderRays();
-	renderPlayer();
+		int wallTopPixel = (WINDOW_HEIGHT / 2) - (wallStripHeight / 2);
+		wallTopPixel = wallTopPixel < 0 ? 0 : wallTopPixel;
 
+		int wallBottomPixel = (WINDOW_HEIGHT / 2) + (wallStripHeight / 2);
+		wallBottomPixel = wallBottomPixel > WINDOW_HEIGHT ? WINDOW_HEIGHT : wallBottomPixel;
 
-	SDL_RenderPresent(renderer);
+		//render the wall from walltoppixel to wallbottompixel
+		//천장픽셀
+		for (int y = 0; y < wallTopPixel; y++)
+		{
+			drawPixel(x,y, 0xFF444444);
+		}
+
+		int textureOffsetX;
+		//TODO: calculate textureOffsetX
+		if (rays[x].wasHitVertical) 
+		{
+			//perform offset for the vertical hit
+			textureOffsetX = (int)(rays[x].wallHitY) % TILE_SIZE;
+		}
+		else
+		{
+			textureOffsetX = (int)(rays[x].wallHitX) % TILE_SIZE;
+			//perform offset for the horizontal hit
+		}
+
+		//get the correct texture id number from the map content
+		int texNum = rays[x].wallHitContent - 1;
+		
+		int texture_width = wallTextures[texNum].width;
+		int texture_height = wallTextures[texNum].height;
+
+		//벽 있는부분
+		for (int y = wallTopPixel; y < wallBottomPixel; y++)
+		{
+			// TODO: 텍스처에 색깔을 참조해서 벽 픽셀 색을 바꿔주기
+			// set the color of the wall based on the color from the texture\
+			// texelColor is texture pixel color
+			// TODO: calculate textureOffsetY
+			int distanceFromTop = y + (wallStripHeight / 2) - (WINDOW_HEIGHT / 2);
+			int textureOffsetY = distanceFromTop * ((float)texture_height / wallStripHeight);
+
+			uint32_t texelColor = wallTextures[texNum].texture_buffer[(texture_width * textureOffsetY) + textureOffsetX];
+			drawPixel(x, y, texelColor);
+		}
+
+		//바닥 픽셀
+		for (int y = wallBottomPixel + 1; y < WINDOW_HEIGHT; y++)
+		{
+			drawPixel(x, y, 0xFF888888);
+		}
+
+	}
 }
 
 
 
-int main(int argc, char* args[])
+void render()
+{
+	clearColorBuffer(0xFF000000);
+	// TODO : 3d projection of walls
+	renderWallProjection();
+	//drawRect(100, 200, 500, 300, 0xFF0F0F0F);
+	//display the minimap
+	renderMap();
+	//renderRays();
+	//renderPlayer();
+
+	renderColorBuffer();
+}
+
+void releaseResources(void)
+{
+	freeWallTextures();
+	destroyWindow();
+}
+
+
+
+int main()
 {
 	//창 띄우기
 	isGameRunning = initializeWindow();
@@ -513,7 +498,7 @@ int main(int argc, char* args[])
 	}
 
 
-	destroyWindow();
+	releaseResources();
 
 	return 0;
 }

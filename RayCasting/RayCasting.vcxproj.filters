@@ -18,9 +18,33 @@
     <ClCompile Include="main.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="upng.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="textures.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="map.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="constants.h">
+    <ClInclude Include="defs.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="textures.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="upng.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="map.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
