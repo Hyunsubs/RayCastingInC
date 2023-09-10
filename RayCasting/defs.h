@@ -10,8 +10,6 @@
 
 //각 셀당 타일 사이즈 64x64
 #define TILE_SIZE 64
-#define MAP_NUM_ROWS 13 
-#define MAP_NUM_COLS 20
 
 //텍스처 총 갯수
 #define NUM_TEXTURES 9
@@ -30,8 +28,6 @@
 #define TITLE "Hyunsubs"
 #define WINDOW_HEIGHT 800
 #define WINDOW_WIDTH 1280
-
-
 
 #define FPS 60
 
