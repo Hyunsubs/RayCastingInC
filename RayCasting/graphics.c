@@ -122,3 +122,35 @@ void drawRect(int x, int y, int width, int height, uint32_t color)
 		}
 	}
 }
+
+
+//DDA 알고리즘 활용
+void drawLine(int x0, int y0, int x1, int y1, uint32_t color)
+{
+	//x y 변화값 구하기
+	int delta_x = (x1 - x0);
+	int delta_y = (y1 - y0);
+
+	//변화값이 더 큰 요소를 기준 length로 사용하기
+	int side_length = abs(delta_x) >= abs(delta_y) ? abs(delta_x) : abs(delta_y);
+
+
+	//x값 증가량 = 1 y값 증가량 = y 변화값 / x 변화값
+	//x를 기준으로 정했기 때문에 x가 1씩 증가할때마다 y가 특정값 증가함
+	//division은 항상 floating point number를 발생시키기 때문에
+	//이를 더 현명하게 해결한 브레슨햄 알고리즘을 사용하는 것이 좋다
+	float x_inc = delta_x / (float)side_length;
+	float y_inc = delta_y / (float)side_length;
+
+	float current_x = x0;
+	float current_y = y0;
+
+	for (int i = 0; i < side_length; i++)
+	{
+		//픽셀의 좌표이기 때문에 반올림으로 값을 정수형으로 바꿔줘야함
+		drawPixel(round(current_x), round(current_y), color);
+		current_x += x_inc;
+		current_y += y_inc;
+	}
+
+}

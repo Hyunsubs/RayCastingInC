@@ -144,6 +144,8 @@
     <ClCompile Include="graphics.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="map.c" />
+    <ClCompile Include="player.c" />
+    <ClCompile Include="ray.c" />
     <ClCompile Include="textures.c" />
     <ClCompile Include="upng.c" />
   </ItemGroup>
@@ -151,6 +153,8 @@
     <ClInclude Include="defs.h" />
     <ClInclude Include="graphics.h" />
     <ClInclude Include="map.h" />
+    <ClInclude Include="player.h" />
+    <ClInclude Include="ray.h" />
     <ClInclude Include="textures.h" />
     <ClInclude Include="upng.h" />
   </ItemGroup>
